@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const db = require("./src/config/database");
 const jwt = require("./src/auth/auth");
+const errorHandler = require("./src/errors/errorHandler");
 
 /// Test DB
 db.authenticate()
@@ -22,9 +23,7 @@ app.use(jwt());
 app.use("/users", require("./src/routes/userRoutes"));
 // app.use("/auth", require("./src/routes/authRoutes"));
 
-app.get("/", (req, res, next) => {
-  res.send("INDEX");
-});
+app.use(errorHandler);
 
 const port = process.env.PORT || 5000;
 app.listen(port, console.log("listening at " + port));

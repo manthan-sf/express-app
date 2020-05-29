@@ -6,8 +6,10 @@ const Credentials = require("../models/Credentials");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("../../config.json");
+const Roles = require("../auth/roles");
+const authorize = require("../auth/authorization");
 
-router.get("/", (req, res, next) => {
+router.get("/", authorize([Roles.Admin, Roles.User]), (req, res, next) => {
   User.findAll({
     include: [
       {
@@ -16,15 +18,13 @@ router.get("/", (req, res, next) => {
     ],
   })
     .then((users) => {
-      console.log(users);
       res.status(200).send(users);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => res.status(400).send(err));
 });
 
 router.post("/", (req, res) => {
   let credentialsPayload = { password: req.body.password, userId: null };
-  console.log(req.body);
   const userPayload = { ...req.body };
   delete userPayload.password;
 
@@ -36,27 +36,23 @@ router.post("/", (req, res) => {
           8
         );
         credentialsPayload = { ...credentialsPayload, userId: user.id };
-        console.log("credentials payload", credentialsPayload);
         Credentials.create(credentialsPayload)
           .then((credential) => {
             res.status(201).send(user);
           })
           .catch((err) => {
-            console.log(err);
             res.send(err);
           });
       })
       .catch((err) => {
-        console.log(err);
         res.send(err);
       });
   } catch (err) {
-    console.log(err);
     throw err;
   }
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", authorize([Roles.Admin, Roles.User]), (req, res) => {
   const id = req.params.id;
 
   User.findByPk(id)
@@ -69,10 +65,9 @@ router.delete("/:id", (req, res) => {
     .catch((err) => res.status(400).send(err));
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", authorize([Roles.Admin, Roles.User]), (req, res) => {
   const id = req.params.id;
   const updateUserData = { ...req.body };
-  //   console.log(updateUserData);
   User.findByPk(id)
     .then((user) => {
       user
@@ -85,7 +80,7 @@ router.put("/:id", (req, res) => {
     .catch((err) => res.status(400).send(err));
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", authorize([Roles.Admin, Roles.User]), (req, res) => {
   const id = req.params.id;
 
   User.findByPk(id)
@@ -95,7 +90,7 @@ router.get("/:id", (req, res) => {
     .catch((err) => res.sendStatus(404));
 });
 
-router.post("/change-password/:id", (req, res) => {
+router.post("/change-password/:id", authorize([Roles.Admin, Roles.User]), (req, res) => {
   const id = req.params.id;
   const oldPassword = req.body.oldPassword;
   const newPassword = req.body.newPassword;
@@ -137,13 +132,12 @@ router.post("/authenticate", (req, res) => {
 
           if (await bcrypt.compare(password, credential.password)) {
             const { secret } = config;
-            const token = jwt.sign({ sub: user.id }, secret);
+            const token = jwt.sign({ sub: user.id, role: user.role }, secret);
 
             return res.status(200).send({ token: token, user });
           } else return res.status(400).send("Wrong Password");
         })
         .catch((err) => {
-          console.log(err);
           res.status(401).send(err);
         });
     })

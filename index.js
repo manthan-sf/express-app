@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const db = require("./src/config/database");
-const jwt = require("./src/auth/auth");
+const jwt = require("./src/auth/authenticate");
 const errorHandler = require("./src/errors/errorHandler");
 
 /// Test DB

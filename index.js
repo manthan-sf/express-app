@@ -21,6 +21,7 @@ app.use(jwt());
 
 // User routes
 app.use("/users", require("./src/routes/userRoutes"));
+app.use('/products', require('./src/routes/productRoutes'))
 // app.use("/auth", require("./src/routes/authRoutes"));
 
 app.use(errorHandler);

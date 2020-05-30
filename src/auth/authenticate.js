@@ -7,6 +7,8 @@ const jwt = () => {
     path: [
       { url: "/users/authenticate" },
       { url: "/users", methods: ["POST"] },
+      { url: "/products", methods: ["GET"] },
+      { url: "/products/:id", methods: ["GET"] },
     ],
   });
 };

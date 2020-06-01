@@ -1,7 +1,7 @@
 const shoppingCartRepository = require("../repositories/shoppingCartRepository");
-const statusCodes = require("../config/errors.json").status;
-const exceptionMessages = require("../config/errors.json").exception_message;
-const successMessages = require("../config/errors.json").message;
+const statusCodes = require("../errors/errors.json").status;
+const exceptionMessages = require("../errors/errors.json").exception_message;
+const successMessages = require("../errors/errors.json").message;
 
 exports.addCartToUser = async (userId) => {
   let CartData;

@@ -1,7 +1,7 @@
 const productRepository = require("../repositories/productRepository");
-const statusCodes = require("../config/errors.json").status;
-const successMessages = require("../config/errors.json").message;
-const exceptionMessages = require("../config/errors.json").exception_message;
+const statusCodes = require("../errors/errors.json").status;
+const successMessages = require("../errors/errors.json").message;
+const exceptionMessages = require("../errors/errors.json").exception_message;
 
 exports.getProducts = async () => {
   let productData;

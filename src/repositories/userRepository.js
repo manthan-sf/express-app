@@ -1,8 +1,18 @@
 const User = require("../models/User");
 const Credentials = require("../models/Credentials");
+const ShoppingCart = require("../models/ShoppingCart");
 
 exports.getAllUsers = () => {
-  return User.findAll();
+  return User.findAll({
+    include: [
+      {
+        model: Credentials,
+      },
+      {
+        model: ShoppingCart,
+      },
+    ],
+  });
 };
 
 exports.create = (userPayload) => {
@@ -20,4 +30,3 @@ exports.updateById = (id, userPayload) => {
 exports.getById = (id) => {
   return User.findByPk(id);
 };
-

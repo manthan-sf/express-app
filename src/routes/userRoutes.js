@@ -11,6 +11,7 @@ const Roles = require("../config/roles");
 const authorize = require("../middlewares/authorization");
 const userService = require("../services/userService");
 const credentialsService = require("../services/credentialsService");
+const shoppingCartService = require("../services/shoppingCartService");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -36,8 +37,7 @@ router.post("/", async (req, res, next) => {
     const credentialsResponse = await credentialsService.addCredential(
       credentialPayload
     );
-    console.log(credentialsResponse, credentialPayload);
-    // const updatedUserResponse = await userService.updateUser(userResponse.data.id, {})
+
     res.status(userResponse.status).json({
       data: userResponse.data,
       message: userResponse.message,

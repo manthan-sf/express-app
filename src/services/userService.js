@@ -2,7 +2,7 @@ const userRepository = require("../repositories/userRepository");
 const statusCodes = require("../config/errors.json").status;
 const exceptionMessages = require("../config/errors.json").exception_message;
 const successMessages = require("../config/errors.json").message;
-
+const shoppingCartRepository = require("../repositories/shoppingCartRepository");
 let userService;
 
 exports.getUsers = async () => {
@@ -39,6 +39,9 @@ exports.addUser = async (userPayload) => {
   let message;
   try {
     userData = await userRepository.create(userPayload);
+    cartData = await shoppingCartRepository.addShoppingCart(userData.id);
+
+    await userData.update({ shoppingCartId: cartData.id });
     message = successMessages.post_success;
     status = statusCodes.status_201;
   } catch (err) {
@@ -83,6 +86,7 @@ exports.getUser = async (id) => {
 };
 
 exports.updateUser = async (id, userPayload) => {
+  console.log(id, userPayload);
   let userData;
   let status;
   let userError;

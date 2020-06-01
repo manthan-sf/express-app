@@ -19,5 +19,4 @@ const User = db.define("user", {
 });
 
 User.hasOne(Credentials);
-User.hasOne(ShoppingCart);
 module.exports = User;

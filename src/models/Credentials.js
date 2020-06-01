@@ -1,6 +1,5 @@
 const sequelize = require("sequelize");
 const db = require("../config/database");
-
 const Credentials = db.define("credentials", {
   userId: {
     type: sequelize.INTEGER,
@@ -11,5 +10,4 @@ const Credentials = db.define("credentials", {
     allowNull: false,
   },
 });
-
 module.exports = Credentials;

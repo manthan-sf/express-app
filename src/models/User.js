@@ -1,6 +1,7 @@
 const sequelize = require("sequelize");
 const db = require("../config/database");
 const Credentials = require("./Credentials");
+const ShoppingCart = require("./ShoppingCart");
 const User = db.define("user", {
   firstName: {
     type: sequelize.STRING,
@@ -18,5 +19,5 @@ const User = db.define("user", {
 });
 
 User.hasOne(Credentials);
-
+User.hasOne(ShoppingCart);
 module.exports = User;

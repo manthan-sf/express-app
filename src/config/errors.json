@@ -1,0 +1,32 @@
+{ 
+    "status": {
+        "status_422": 422,
+        "status_200": 200,
+        "status_201": 201,
+        "status_400": 400,
+        "status_401": 401,
+        "status_500": 500,
+        "status_404": 404,
+        "status_204": 204
+    },
+    "exception_message": {
+        "not_found": "Not Found!",
+        "get_error": "Error Occur While Fetching!",
+        "post_error": "Error Occur While Adding!",
+        "delete_error": "Error Occur While Deleting!",
+        "put_error": "Error Occur While Updating!",
+        "user_exist": "User Already Exist!",
+        "signUp_error": "Error Occur While SignUp!",
+        "user_not_exist": "User Not Exist!",
+        "credentials_error": "Please Check Email Or Password!",
+        "login_error": "Error Occur While Login!",
+        "not_auth": "Not authenticated!",
+        "un_support_file_exc": "Unsupported MimeType. Chose png/jpg/jpeg"
+    },
+    "message": {
+        "get_success": "Get Successfully!'",
+        "post_success": "Successfully Added!",
+        "put_success": "Successfully Updated!",
+        "delete_success": "Successfully Deleted!"
+    }
+}

@@ -16,3 +16,5 @@ const jwt = () => {
 };
 
 module.exports = jwt;
+
+//expressJWT serves as a middleware which  keeps an eye on requests and validate JWT headers

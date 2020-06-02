@@ -20,10 +20,8 @@ app.use(bodyParser.json());
 
 app.use(jwt());
 
-// User routes
 app.use("/users", require("./src/routes/userRoutes"));
 app.use("/products", require("./src/routes/productRoutes"));
-// app.use("/shoppingCartItems", require("./src/routes/shoppingCartItemsRoutes"));
 app.use("/shoppingCarts", require("./src/routes/shoppingCartRoutes"));
 // app.use("/auth", require("./src/routes/authRoutes"));
 

@@ -6,11 +6,13 @@ const jwt = () => {
   return expressJwt({ secret }).unless({
     path: [
       { url: "/users/authenticate" },
-      { url: "/users", methods: ["POST", "GET"] },
+      { url: "/users", methods: ["POST"] },
       { url: "/products", methods: ["GET"] },
       { url: "/products/:id", methods: ["GET"] },
-      { url: "/shoppingCarts", methods: ["GET", "POST"] },
-      { url: "/shoppingCartItems", methods: ["GET", "POST"] },
+      { url: "/shoppingCarts", methods: ["POST"] },
+      { url: "/shoppingCarts/:id", methods: ["GET", "DELETE", "PUT"] },
+      { url: "/shoppingCarts/:userId/item", methods: ["POST"] },
+      //will change routes to regex
     ],
   });
 };

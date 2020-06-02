@@ -8,5 +8,5 @@ const ShoppingCart = db.define("shoppingCart", {
   //   },
 });
 
-// ShoppingCart.hasMany(ShoppingCartItem);
+ShoppingCart.hasMany(ShoppingCartItem);
 module.exports = ShoppingCart;

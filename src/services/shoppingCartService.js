@@ -142,9 +142,7 @@ exports.getItems = async (cartId) => {
   let message;
   try {
     ItemData = await shoppingCartRepository.getItems(cartId);
-    console.log({
-      shoppingCartItemId: ItemData.id,
-    });
+
 
     status = statusCodes.status_200;
     message = successMessages.get_success;

@@ -3,7 +3,6 @@ const bodyParser = require("body-parser");
 const db = require("./src/config/database");
 const jwt = require("./src/middlewares/authenticate");
 const errorHandler = require("./src/errors/errorHandler");
-const ItemCartRelation = require("./src/models/relations/cartAndItemRelation");
 const UserCartRelation = require('./src/models/relations/cartAndUserRelation')
 /// Test DB
 db.authenticate()
@@ -23,7 +22,6 @@ app.use(jwt());
 app.use("/users", require("./src/routes/userRoutes"));
 app.use("/products", require("./src/routes/productRoutes"));
 app.use("/shoppingCarts", require("./src/routes/shoppingCartRoutes"));
-// app.use("/auth", require("./src/routes/authRoutes"));
 
 app.use(errorHandler);
 

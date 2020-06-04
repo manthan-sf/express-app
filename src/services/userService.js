@@ -3,7 +3,10 @@ const statusCodes = require("../errors/errors.json").status;
 const exceptionMessages = require("../errors/errors.json").exception_message;
 const successMessages = require("../errors/errors.json").message;
 const shoppingCartRepository = require("../repositories/shoppingCartRepository");
-let userService;
+const credentialsRepository = require("../repositories/credentialsRepository");
+const bcrypt = require("bcryptjs");
+const config = require("../../config.json");
+const jwt = require("jsonwebtoken");
 
 exports.getUsers = async () => {
   let message;
@@ -129,5 +132,88 @@ exports.deleteUser = async (id) => {
     data: userData || userError,
     message: message,
     status: status,
+  };
+};
+
+exports.changePassword = async (userId, credentialPayload) => {
+  let credentialData;
+  let credentialError;
+  let status;
+  let message;
+
+  try {
+    credentialData = await credentialsRepository.getCredentials(userId);
+
+    if (
+      await bcrypt.compare(
+        credentialPayload.oldPassword,
+        credentialData.password
+      )
+    ) {
+      credentialPayload.newPassword = await bcrypt.hash(
+        credentialPayload.newPassword,
+        config.salt
+      );
+
+      const passwordPayload = { password: credentialPayload.newPassword };
+      await credentialsRepository.changePassword(userId, passwordPayload);
+      status = statusCodes.status_204;
+      message = successMessages.password_update_success;
+    } else {
+      status = statusCodes.status_400;
+      message = exceptionMessages.wrong_password;
+    }
+  } catch (err) {
+    credentialError = err;
+    status = statusCodes.status_500;
+    message = exceptionMessages.put_password_error;
+  }
+  return {
+    data: credentialError,
+    status: status,
+    message: message,
+  };
+};
+
+exports.authenticate = async (authenticationPayload) => {
+  const { email, password } = authenticationPayload;
+  let user;
+  let credentialData;
+  let status;
+  let message;
+  let credentialError;
+  let token;
+  try {
+    user = await userRepository.getByEmail(email);
+    if (!user) {
+      status = statusCodes.status_404;
+      message = exceptionMessages.user_not_exist;
+    } else {
+      credentialData = await credentialsRepository.getCredentials(user.id);
+      if (!credentialData) {
+        status = statusCodes.status_404;
+        message = exceptionMessages.wrong_password;
+      } else {
+        if (await bcrypt.compare(password, credentialData.password)) {
+          const { secret } = config;
+          token = jwt.sign({ sub: user.id, role: user.role }, secret);
+          status = statusCodes.status_200;
+          message = successMessages.auth_success;
+        }
+      }
+    }
+  } catch (err) {
+    credentialError = err;
+    status = statusCodes.status_500;
+    message = exceptionMessages.server_error;
+  }
+
+  return {
+    data: {
+      user: user,
+      token: token,
+    },
+    status: status,
+    message: message,
   };
 };

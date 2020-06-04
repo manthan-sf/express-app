@@ -8,3 +8,6 @@ exports.changePassword = (userId, passwordPayload) => {
   return Credentials.update(passwordPayload, { where: { userId: userId } });
 };
 
+exports.getCredentials = (userId) => {
+  return Credentials.findOne({ where: { userId: userId } });
+};

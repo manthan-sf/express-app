@@ -1,3 +1,4 @@
 {
-    "secret":"YEAH_ITS_MY_SECRET"
+    "secret":"YEAH_ITS_MY_SECRET",
+    "salt": 8
 }

@@ -5,7 +5,6 @@ const User = require("../models/User");
 const Credentials = require("../models/Credentials");
 const ShoppingCart = require("../models/ShoppingCart");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const config = require("../../config.json");
 const Roles = require("../config/roles");
 const authorize = require("../middlewares/authorization");
@@ -101,66 +100,40 @@ router.get(
   }
 );
 
-router.post(
-  "/change-password/:id",
-  authorize([Roles.Admin, Roles.User]),
-  (req, res) => {
-    const id = req.params.id;
-    const oldPassword = req.body.oldPassword;
-    const newPassword = req.body.newPassword;
-    let bcryptedNewPassword = null;
-
-    User.findByPk(id, {
-      include: [
-        {
-          model: Credentials,
-        },
-      ],
-    })
-      .then(async (user) => {
-        if (await bcrypt.compare(oldPassword, user.credential.password)) {
-          bcryptedNewPassword = await bcrypt.hash(newPassword, 8);
-          user.credential
-            .update({
-              password: bcryptedNewPassword,
-            })
-            .then((credential) => res.sendStatus(204))
-            .catch((err) => res.status(400).send(err));
-        } else res.status(400).send("Incorrect Password");
-      })
-      .catch((err) => res.status(404).send(err));
+router.post("/change-password/:userId", async (req, res, next) => {
+  const userId = req.params.userId;
+  const credentialPayload = { ...req.body };
+  let credentialResponse;
+  try {
+    credentialResponse = await userService.changePassword(
+      userId,
+      credentialPayload
+    );
+    res.status(credentialResponse.status).json({
+      data: credentialResponse.data,
+      message: credentialResponse.message,
+    });
+  } catch (err) {
+    next(err);
   }
-);
+});
 
-router.post("/authenticate", (req, res) => {
-  const { email, password } = req.body;
-
-  User.findOne({ where: { email: email } })
-    .then((user) => {
-      if (!user)
-        return res
-          .status(400)
-          .send("Username or password is incorrect and user not found");
-
-      Credentials.findOne({ where: { userId: user.id } })
-        .then(async (credential) => {
-          if (!credential) {
-            console.log(credential);
-            return res.status(400).send("Username or password is incorrect");
-          }
-
-          if (await bcrypt.compare(password, credential.password)) {
-            const { secret } = config;
-            const token = jwt.sign({ sub: user.id, role: user.role }, secret);
-
-            return res.status(200).send({ token: token, user });
-          } else return res.status(400).send("Wrong Password");
-        })
-        .catch((err) => {
-          res.status(401).send(err);
-        });
-    })
-    .catch((err) => res.status(400).send(err));
+router.post("/authenticate", async (req, res, next) => {
+ 
+  const authenticationPayload = { ...req.body };
+  console.log(authenticationPayload)
+  let authenticationResponse;
+  try {
+    authenticationResponse = await userService.authenticate(
+      authenticationPayload
+    );
+    res.status(authenticationResponse.status).json({
+      data: authenticationResponse.data,
+      message: authenticationResponse.message,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;

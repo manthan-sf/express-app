@@ -19,12 +19,17 @@
         "user_not_exist": "User Not Exist!",
         "credentials_error": "Please Check Email Or Password!",
         "not_auth": "Not authenticated!",
-        "unauthorized": "UnauthorizedError"
+        "unauthorized": "UnauthorizedError",
+        "put_password_error":"Error While Updating Password",
+        "wrong_password": "Wrong Password",
+        "server_error": "Server Error"
     },
     "message": {
         "get_success": "Get Successfully!'",
         "post_success": "Successfully Added!",
         "put_success": "Successfully Updated!",
-        "delete_success": "Successfully Deleted!"
+        "delete_success": "Successfully Deleted!",
+        "password_update_success": "Password Updated Successfully",
+        "auth_success":"Authenticated"
     }
 }

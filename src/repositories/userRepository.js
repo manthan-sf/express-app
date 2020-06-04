@@ -30,3 +30,6 @@ exports.updateById = (id, userPayload) => {
 exports.getById = (id) => {
   return User.findByPk(id);
 };
+exports.getByEmail = (email) => {
+  return User.findOne({ where: { email: email } });
+};

@@ -143,7 +143,6 @@ exports.getItems = async (cartId) => {
   try {
     ItemData = await shoppingCartRepository.getItems(cartId);
 
-
     status = statusCodes.status_200;
     message = successMessages.get_success;
   } catch (err) {

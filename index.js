@@ -22,7 +22,7 @@ app.use(jwt());
 app.use("/users", require("./src/routes/userRoutes"));
 app.use("/products", require("./src/routes/productRoutes"));
 app.use("/shoppingCarts", require("./src/routes/shoppingCartRoutes"));
-
+app.use("/orders", require("./src/routes/orderRoutes"))
 app.use(errorHandler);
 
 const port = process.env.PORT || 5000;

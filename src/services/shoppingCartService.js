@@ -157,3 +157,101 @@ exports.getItems = async (cartId) => {
     message: message,
   };
 };
+
+exports.deleteItem = async (cartId, itemId) => {
+  let ItemData;
+  let ItemError;
+  let status;
+  let message;
+
+  try {
+    ItemData = await shoppingCartRepository.deleteItem(cartId, itemId);
+    status = statusCodes.status_204;
+    message = successMessages.delete_success;
+  } catch (err) {
+    ItemError = err;
+    status = statusCodes.status_500;
+    message = exceptionMessages.delete_error;
+  }
+
+  return {
+    data: ItemData || ItemError,
+    status: status,
+    message: message,
+  };
+};
+
+exports.changeQuantity = async (cartId, itemId, quantity) => {
+  let ItemData;
+  let ItemError;
+  let status;
+  let message;
+  let quantityPayload = { quantity };
+  try {
+    ItemData = await shoppingCartRepository.changeQuantity(
+      cartId,
+      itemId,
+      quantityPayload
+    );
+    status = statusCodes.status_204;
+    message = successMessages.put_success;
+  } catch (err) {
+    ItemError = err;
+    status = statusCodes.status_500;
+    message = exceptionMessages.put_error;
+  }
+
+  return {
+    data: ItemData || ItemError,
+    status: status,
+    message: message,
+  };
+};
+
+exports.getItemsTotal = async (cartId) => {
+  let ItemData;
+  let ItemError;
+  let status;
+  let message;
+  let total = 0;
+  try {
+    ItemData = await shoppingCartRepository.getItems(cartId);
+    status = statusCodes.status_200;
+    message = successMessages.get_success;
+  } catch (err) {
+    ItemError = err;
+    status = statusCodes.status_500;
+    message = exceptionMessages.get_error;
+  }
+
+  ItemData.forEach((item) => {
+    total += item.price * item.quantity;
+  });
+
+  return {
+    total,
+    status,
+    message,
+  };
+};
+
+exports.updateItems = async (itemsPayload, cartId) => {
+  let ItemData;
+  let ItemError;
+  let status;
+  let message;
+  try {
+    ItemData = await shoppingCartRepository.updateItems(itemsPayload, cartId);
+    status = statusCodes.status_200;
+    message = successMessages.put_success;
+  } catch (err) {
+    ItemError = err;
+    status = statusCodes.status_500;
+    message = exceptionMessages.put_error;
+  }
+
+  return {
+    status: status,
+    message: message,
+  };
+};

@@ -78,4 +78,35 @@ router.get("/:cartId/item", async (req, res, next) => {
     next(err);
   }
 });
+
+router.delete("/:cartId/item/:itemId", async (req, res, next) => {
+  const { cartId, itemId } = req.params;
+  let itemResponse = null;
+
+  try {
+    itemResponse = await shoppingCartService.deleteItem(cartId, itemId);
+    res.status(itemResponse.status).json({
+      data: itemResponse.data,
+      message: itemResponse.message,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.put("/:cartId/item/:itemId", async (req, res, next) => {
+  const { cartId, itemId } = req.params;
+  let {quantity} = req.body
+  let itemResponse = null;
+
+  try {
+    itemResponse = await shoppingCartService.changeQuantity(cartId, itemId, quantity);
+    res.status(itemResponse.status).json({
+      data: itemResponse.data,
+      message: itemResponse.message,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
 module.exports = router;

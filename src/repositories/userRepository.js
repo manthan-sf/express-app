@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const Credentials = require("../models/Credentials");
 const ShoppingCart = require("../models/ShoppingCart");
-
+const Order = require("../models/Order");
 exports.getAllUsers = () => {
   return User.findAll({
     include: [
@@ -10,6 +10,9 @@ exports.getAllUsers = () => {
       },
       {
         model: ShoppingCart,
+      },
+      {
+        model: Order,
       },
     ],
   });

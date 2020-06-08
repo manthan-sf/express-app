@@ -6,8 +6,21 @@ exports.createOrder = async (orderPayload) => {
 };
 exports.getOrders = async () => {
   return Order.findAll({
-    include:[{
-      model: ShoppingCartItem
-    }]
+    include: [
+      {
+        model: ShoppingCartItem,
+      },
+    ],
   });
+};
+
+exports.getOrderById = async (orderId) => {
+  return Order.findByPk(orderId);
+};
+exports.updateOrder = async (orderId, orderPayload) => {
+  return Order.update(orderPayload, { where: { id: orderId } });
+};
+
+exports.deleteOrder = async (orderId) => {
+  return Order.destroy({ where: { id: orderId } });
 };

@@ -53,7 +53,6 @@ exports.getOrders = async () => {
   try {
     OrderData = await orderRepository.getOrders();
 
-    console.log(OrderData);
     status = statusCodes.status_200;
     message = successMessage.get_success;
   } catch (err) {
@@ -68,3 +67,72 @@ exports.getOrders = async () => {
     message,
   };
 };
+
+exports.getOrderById = async (orderId) => {
+  let OrderData;
+  let OrderError;
+  let status;
+  let message;
+  try {
+    OrderData = await orderRepository.getOrderById(orderId);
+
+    status = statusCodes.status_200;
+    message = successMessage.get_success;
+  } catch (err) {
+    OrderError = err;
+    status = statusCodes.status_500;
+    message = excetionMessage.get_error;
+  }
+
+  return {
+    data: OrderData || OrderError,
+    status,
+    message,
+  };
+};
+
+exports.updateOrder = async (orderId, orderPayload) => {
+    let OrderData;
+    let OrderError;
+    let status;
+    let message;
+    try {
+      OrderData = await orderRepository.updateOrder(orderId, orderPayload);
+  
+      status = statusCodes.status_204;
+      message = successMessage.put_success;
+    } catch (err) {
+      OrderError = err;
+      status = statusCodes.status_500;
+      message = excetionMessage.put_error;
+    }
+  
+    return {
+      data: OrderData || OrderError,
+      status,
+      message,
+    };
+}
+
+exports.deleteOrder = async (orderId) => {
+    let OrderData;
+    let OrderError;
+    let status;
+    let message;
+    try {
+      OrderData = await orderRepository.deleteOrder(orderId);
+  
+      status = statusCodes.status_204;
+      message = successMessage.delete_success;
+    } catch (err) {
+      OrderError = err;
+      status = statusCodes.status_500;
+      message = excetionMessage.delete_error;
+    }
+  
+    return {
+      data: OrderData || OrderError,
+      status,
+      message,
+    };
+}

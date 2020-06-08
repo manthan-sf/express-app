@@ -24,7 +24,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/register", async (req, res, next) => {
   const { password, ...userPayload } = req.body;
   let credentialPayload = {
     password: await bcrypt.hash(password, 8),
@@ -118,7 +118,7 @@ router.post("/change-password/:userId", async (req, res, next) => {
   }
 });
 
-router.post("/authenticate", async (req, res, next) => {
+router.post("/login/auth-token", async (req, res, next) => {
  
   const authenticationPayload = { ...req.body };
   console.log(authenticationPayload)

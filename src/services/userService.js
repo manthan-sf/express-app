@@ -46,7 +46,6 @@ exports.addUser = async (userPayload, passwordPayload) => {
     passwordPayload = { ...passwordPayload, userId: userData.id };
     credentialData = await credentialsService.addCredential(passwordPayload);
     cartData = await shoppingCartRepository.addShoppingCart(userData.id);
-    
     await userData.update({ shoppingCartId: cartData.id });
     message = successMessages.post_success;
     status = statusCodes.status_201;

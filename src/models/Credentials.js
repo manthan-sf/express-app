@@ -8,6 +8,10 @@ const Credentials = db.define("credentials", {
   password: {
     type: sequelize.STRING,
     allowNull: false,
+    validate: {
+      notEmpty: true,
+      len: [8,30],
+    }
   },
 });
 module.exports = Credentials;

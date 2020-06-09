@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const orderService = require("../services/orderService");
+const authorize = require("../middlewares/authorization")
+const Roles =require("../config/roles")
 
-router.post("/shoppingCart/:cartId/user/:userId", async (req, res, next) => {
+router.post("/shoppingCart/:cartId/user/:userId", authorize([Roles.Admin, Roles.User]),async (req, res, next) => {
   const { cartId, userId } = req.params;
   const { orderDescription } = req.body;
   let orderResponse;
@@ -21,7 +23,7 @@ router.post("/shoppingCart/:cartId/user/:userId", async (req, res, next) => {
   }
 });
 
-router.get("/", async (req, res, next) => {
+router.get("/",authorize([Roles.Admin]), async (req, res, next) => {
   let orderResponse;
 
   try {
@@ -35,7 +37,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:orderId", async (req, res, next) => {
+router.get("/:orderId",authorize([Roles.Admin, Roles.User]), async (req, res, next) => {
   let { orderId } = req.params;
   let orderResponse;
   try {
@@ -49,7 +51,7 @@ router.get("/:orderId", async (req, res, next) => {
   }
 });
 
-router.put("/:orderId", async (req, res, next) => {
+router.put("/:orderId", authorize([Roles.Admin, Roles.User]),async (req, res, next) => {
   let { orderId } = req.params;
   let orderPayload = { ...req.body };
   let orderResponse;
@@ -66,7 +68,7 @@ router.put("/:orderId", async (req, res, next) => {
   }
 });
 
-router.delete("/:orderId", async (req, res, next) => {
+router.delete("/:orderId", authorize([Roles.Admin, Roles.User]),async (req, res, next) => {
     let { orderId } = req.params;
     let orderResponse;
   

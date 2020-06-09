@@ -6,7 +6,7 @@ const authorize = require("../middlewares/authorization");
 const userService = require("../services/userService");
 const credentialsService = require("../services/credentialsService");
 
-router.get("/", async (req, res, next) => {
+router.get("/", authorize([Roles.Admin]),async (req, res, next) => {
   try {
     const userResponse = await userService.getUsers();
     res.status(userResponse.status).json({
@@ -21,11 +21,14 @@ router.get("/", async (req, res, next) => {
 router.post("/register", async (req, res, next) => {
   const { password, ...userPayload } = req.body;
   let passwordPayload = {
-    password: await bcrypt.hash(password, 8),
+    password: password,
   };
   try {
-    const userResponse = await userService.addUser(userPayload, passwordPayload);
-   
+    const userResponse = await userService.addUser(
+      userPayload,
+      passwordPayload
+    );
+
     res.status(userResponse.status).json({
       data: userResponse.data,
       message: userResponse.message,
@@ -35,25 +38,21 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
-router.delete(
-  "/:id",
-  authorize([Roles.Admin, Roles.User]),
-  async (req, res, next) => {
-    const id = req.params.id;
-    let userResponse;
+router.delete("/:id", authorize([Roles.Admin]), async (req, res, next) => {
+  const id = req.params.id;
+  let userResponse;
 
-    try {
-      userResponse = await userService.deleteUser(id);
-      res.status(userResponse.status).json({
-        data: userResponse.data,
-        message: userResponse.message,
-      });
-    } catch (err) {
-      console.log(err);
-      next(err);
-    }
+  try {
+    userResponse = await userService.deleteUser(id);
+    res.status(userResponse.status).json({
+      data: userResponse.data,
+      message: userResponse.message,
+    });
+  } catch (err) {
+    console.log(err);
+    next(err);
   }
-);
+});
 
 router.put(
   "/:id",
@@ -71,17 +70,35 @@ router.put(
   }
 );
 
-router.get(
-  "/:id",
+router.get("/:id", authorize([Roles.Admin]), async (req, res, next) => {
+  const id = req.params.id;
+  let userResponse;
+  try {
+    userResponse = await userService.getUser(id);
+    res.status(userResponse.status).json({
+      data: userResponse.data,
+      message: userResponse.message,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post(
+  "/change-password/:userId",
   authorize([Roles.Admin, Roles.User]),
   async (req, res, next) => {
-    const id = req.params.id;
-    let userResponse;
+    const userId = req.params.userId;
+    const credentialPayload = { ...req.body };
+    let credentialResponse;
     try {
-      userResponse = await userService.getUser(id);
-      res.status(userResponse.status).json({
-        data: userResponse.data,
-        message: userResponse.message,
+      credentialResponse = await userService.changePassword(
+        userId,
+        credentialPayload
+      );
+      res.status(credentialResponse.status).json({
+        data: credentialResponse.data,
+        message: credentialResponse.message,
       });
     } catch (err) {
       next(err);
@@ -89,28 +106,9 @@ router.get(
   }
 );
 
-router.post("/change-password/:userId", async (req, res, next) => {
-  const userId = req.params.userId;
-  const credentialPayload = { ...req.body };
-  let credentialResponse;
-  try {
-    credentialResponse = await userService.changePassword(
-      userId,
-      credentialPayload
-    );
-    res.status(credentialResponse.status).json({
-      data: credentialResponse.data,
-      message: credentialResponse.message,
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
 router.post("/login/auth-token", async (req, res, next) => {
- 
   const authenticationPayload = { ...req.body };
-  console.log(authenticationPayload)
+  console.log(authenticationPayload);
   let authenticationResponse;
   try {
     authenticationResponse = await userService.authenticate(

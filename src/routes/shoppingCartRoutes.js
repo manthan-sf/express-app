@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const shoppingCartService = require("../services/shoppingCartService");
-
-router.get("/:id", async (req, res, next) => {
+const authorize = require("../middlewares/authorization")
+const Roles = require("../config/roles")
+router.get("/:id", authorize([Roles.Admin, Roles.User]),async (req, res, next) => {
   const id = req.params.id;
   let cartResponse = null;
   try {
@@ -16,7 +17,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.put("/:id", async (req, res, next) => {
+router.put("/:id",authorize([Roles.Admin, Roles.User]), async (req, res, next) => {
   const id = req.params.id;
   const cartPayload = { ...req.body };
   let cartResponse = null;
@@ -31,7 +32,7 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id",authorize([Roles.Admin]), async (req, res, next) => {
   const id = req.params.id;
   let cartResponse = null;
 
@@ -46,7 +47,7 @@ router.delete("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/:cartId/item", async (req, res, next) => {
+router.post("/:cartId/item",authorize([Roles.Admin, Roles.User]), async (req, res, next) => {
   const cartId = req.params.cartId;
   const itemPayload = { ...req.body, shoppingCartId: cartId };
   // itemPayload = { ...itemPayload, shoppingCartId: cartId };
@@ -64,7 +65,7 @@ router.post("/:cartId/item", async (req, res, next) => {
   }
 });
 
-router.get("/:cartId/item", async (req, res, next) => {
+router.get("/:cartId/item", authorize([Roles.Admin, Roles.User]),async (req, res, next) => {
   const cartId = req.params.cartId;
   let itemResponse = null;
 
@@ -79,7 +80,7 @@ router.get("/:cartId/item", async (req, res, next) => {
   }
 });
 
-router.delete("/:cartId/item/:itemId", async (req, res, next) => {
+router.delete("/:cartId/item/:itemId",authorize([Roles.Admin, Roles.User]), async (req, res, next) => {
   const { cartId, itemId } = req.params;
   let itemResponse = null;
 
@@ -94,7 +95,7 @@ router.delete("/:cartId/item/:itemId", async (req, res, next) => {
   }
 });
 
-router.put("/:cartId/item/:itemId", async (req, res, next) => {
+router.put("/:cartId/item/:itemId",authorize([Roles.Admin, Roles.User]), async (req, res, next) => {
   const { cartId, itemId } = req.params;
   let {quantity} = req.body
   let itemResponse = null;

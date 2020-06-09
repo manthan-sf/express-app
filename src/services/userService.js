@@ -41,6 +41,9 @@ exports.addUser = async (userPayload, passwordPayload) => {
   let userError;
   let message;
   let credentialData;
+  passwordPayload = {
+    password: await bcrypt.hash(passwordPayload.password, 8),
+  };
   try {
     userData = await userRepository.create(userPayload);
     passwordPayload = { ...passwordPayload, userId: userData.id };
@@ -198,7 +201,9 @@ exports.authenticate = async (authenticationPayload) => {
       } else {
         if (await bcrypt.compare(password, credentialData.password)) {
           const { secret } = config;
-          token = jwt.sign({ sub: user.id, role: user.role }, secret);
+          token = jwt.sign({ sub: user.id, role: user.role }, secret, {
+            expiresIn: "1d",
+          });
           status = statusCodes.status_200;
           message = successMessages.auth_success;
         }

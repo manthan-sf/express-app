@@ -1,16 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../config/database");
-const User = require("../models/User");
-const Credentials = require("../models/Credentials");
-const ShoppingCart = require("../models/ShoppingCart");
 const bcrypt = require("bcryptjs");
-const config = require("../../config.json");
 const Roles = require("../config/roles");
 const authorize = require("../middlewares/authorization");
 const userService = require("../services/userService");
 const credentialsService = require("../services/credentialsService");
-const shoppingCartService = require("../services/shoppingCartService");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -26,17 +20,12 @@ router.get("/", async (req, res, next) => {
 
 router.post("/register", async (req, res, next) => {
   const { password, ...userPayload } = req.body;
-  let credentialPayload = {
+  let passwordPayload = {
     password: await bcrypt.hash(password, 8),
-    userId: null,
   };
   try {
-    const userResponse = await userService.addUser(userPayload);
-    credentialPayload = { ...credentialPayload, userId: userResponse.data.id };
-    const credentialsResponse = await credentialsService.addCredential(
-      credentialPayload
-    );
-
+    const userResponse = await userService.addUser(userPayload, passwordPayload);
+   
     res.status(userResponse.status).json({
       data: userResponse.data,
       message: userResponse.message,

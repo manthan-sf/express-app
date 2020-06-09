@@ -7,7 +7,7 @@ const credentialsRepository = require("../repositories/credentialsRepository");
 const bcrypt = require("bcryptjs");
 const config = require("../../config.json");
 const jwt = require("jsonwebtoken");
-
+const credentialsService = require("./credentialsService");
 exports.getUsers = async () => {
   let message;
   let status;
@@ -20,7 +20,7 @@ exports.getUsers = async () => {
       status = statusCodes.status_404;
     } else {
       message = successMessages.get_success;
-      status = 200;
+      status = statusCodes.status_200;
     }
   } catch (err) {
     userError = err;
@@ -35,15 +35,18 @@ exports.getUsers = async () => {
   };
 };
 
-exports.addUser = async (userPayload) => {
+exports.addUser = async (userPayload, passwordPayload) => {
   let userData;
   let status;
   let userError;
   let message;
+  let credentialData;
   try {
     userData = await userRepository.create(userPayload);
+    passwordPayload = { ...passwordPayload, userId: userData.id };
+    credentialData = await credentialsService.addCredential(passwordPayload);
     cartData = await shoppingCartRepository.addShoppingCart(userData.id);
-
+    
     await userData.update({ shoppingCartId: cartData.id });
     message = successMessages.post_success;
     status = statusCodes.status_201;

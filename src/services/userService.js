@@ -7,7 +7,7 @@ const credentialsRepository = require("../repositories/credentialsRepository");
 const bcrypt = require("bcryptjs");
 const config = require("../../config.json");
 const jwt = require("jsonwebtoken");
-
+const credentialsService = require("./credentialsService");
 exports.getUsers = async () => {
   let message;
   let status;
@@ -35,13 +35,19 @@ exports.getUsers = async () => {
   };
 };
 
-exports.addUser = async (userPayload) => {
+exports.addUser = async (userPayload, passwordPayload) => {
   let userData;
   let status;
   let userError;
   let message;
+  let credentialData;
   try {
     userData = await userRepository.create(userPayload);
+    passwordPayload = { ...passwordPayload, userId: userData.id };
+    credentialData = await credentialsService.addCredential(passwordPayload);
+    if (!credentialData) {
+      throw Error("Can't add credential");
+    }
     cartData = await shoppingCartRepository.addShoppingCart(userData.id);
 
     await userData.update({ shoppingCartId: cartData.id });
